@@ -1,0 +1,30 @@
+{
+  "name": "fluxbot",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Self-hostable all-in-one Fluxer bot with a web dashboard",
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "pnpm@12.3.4",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "dev": "pnpm -r --parallel --filter @fluxbot/bot --filter @fluxbot/web dev",
+    "dev:bot": "pnpm --filter @fluxbot/bot dev",
+    "dev:web": "pnpm --filter @fluxbot/web dev",
+    "build": "pnpm --filter @fluxbot/web build",
+    "start": "pnpm --filter @fluxbot/web start",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "db:generate": "pnpm --filter @fluxbot/db generate",
+    "db:migrate": "pnpm --filter @fluxbot/db migrate"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.6.2",
+    "typescript": "~5.9.3"
+  }
+}
