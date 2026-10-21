@@ -31,7 +31,7 @@ export default async function LoginPage({
 
       {error ? (
         <div className="mt-6">
-          <Banner tone="red">{decodeURIComponent(error)}</Banner>
+          <Banner tone="red">{error}</Banner>
         </div>
       ) : null}
 

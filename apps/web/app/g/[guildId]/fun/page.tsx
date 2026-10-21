@@ -48,7 +48,7 @@ export default async function FunPage({
       />
 
       {saved ? <Banner tone="green">Saved.</Banner> : null}
-      {error ? <Banner tone="red">{decodeURIComponent(error)}</Banner> : null}
+      {error ? <Banner tone="red">{error}</Banner> : null}
 
       <form action={saveFunAction} className="space-y-6">
         <input type="hidden" name="guildId" value={access.guild.id} />

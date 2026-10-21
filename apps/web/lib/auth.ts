@@ -231,7 +231,8 @@ export async function getAccessToken(session: SessionWithUser): Promise<string> 
 
   const refresh = session.session.refreshTokenEnc;
   if (!refresh) {
-    await logout();
+    // Server Components cannot delete cookies; drop the DB session instead.
+    await deleteSession(getDb(), session.session.id);
     redirect('/login');
   }
 
@@ -253,7 +254,7 @@ export async function getAccessToken(session: SessionWithUser): Promise<string> 
 
     return token.access_token;
   } catch {
-    await logout();
+    await deleteSession(getDb(), session.session.id);
     redirect('/login?error=session-expired');
   }
 }

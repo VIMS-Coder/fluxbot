@@ -50,7 +50,7 @@ export default async function LevelsPage({
       />
 
       {saved ? <Banner tone="green">Saved. The bot picks this up immediately.</Banner> : null}
-      {error ? <Banner tone="red">{decodeURIComponent(error)}</Banner> : null}
+      {error ? <Banner tone="red">{error}</Banner> : null}
 
       <div className="mb-6 grid gap-4 sm:grid-cols-3">
         <Stat label="Ranked members" value={ranked} hint="Members with XP" />

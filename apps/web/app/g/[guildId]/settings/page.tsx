@@ -61,7 +61,7 @@ export default async function SettingsPage({
       <PageHeader title="Settings" description="Server-level options and connection details." />
 
       {saved ? <Banner tone="green">Saved.</Banner> : null}
-      {error ? <Banner tone="red">{decodeURIComponent(error)}</Banner> : null}
+      {error ? <Banner tone="red">{error}</Banner> : null}
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
@@ -132,7 +132,7 @@ export default async function SettingsPage({
               Required bot permissions
             </div>
             <div className="flex flex-wrap gap-1.5">
-              {requiredPermissions.length === 0 ? (
+              {enabledModules.length === 0 ? (
                 <span className="text-sm text-zinc-500">Enable a module first.</span>
               ) : (
                 requiredPermissions.map((name) => (

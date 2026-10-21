@@ -66,6 +66,7 @@ export default async function RolesPage({
     (channel) => channel.name && (channel.type === 0 || channel.type === 5),
   );
   const channels = textChannels.length > 0 ? textChannels : snapshot.channels.filter((c) => c.name);
+  const assignableRoles = snapshot.roles.filter((role) => role.id !== access.guild.guildId);
 
   return (
     <>
@@ -80,7 +81,7 @@ export default async function RolesPage({
       />
 
       {saved ? <Banner tone="green">Saved.</Banner> : null}
-      {error ? <Banner tone="red">{decodeURIComponent(error)}</Banner> : null}
+      {error ? <Banner tone="red">{error}</Banner> : null}
 
       <form action={saveRolesAction} className="space-y-6">
         <input type="hidden" name="guildId" value={access.guild.id} />
@@ -209,7 +210,7 @@ export default async function RolesPage({
           </div>
           <div className="lg:col-span-3">
             <Field label="Role" htmlFor="rrRole">
-              <RolePicker roles={snapshot.roles} name="roleId" id="rrRole" />
+              <RolePicker roles={assignableRoles} name="roleId" id="rrRole" />
             </Field>
           </div>
           <div className="flex items-end lg:col-span-3">
@@ -250,7 +251,7 @@ export default async function RolesPage({
           <form action={addAutoRoleAction} className="mt-4 space-y-3">
             <input type="hidden" name="guildId" value={access.guild.id} />
             <Field label="Role" htmlFor="autoRole">
-              <RolePicker roles={snapshot.roles} name="roleId" id="autoRole" />
+              <RolePicker roles={assignableRoles} name="roleId" id="autoRole" />
             </Field>
             <Button type="submit" variant="secondary">
               <Plus className="size-4" /> Add auto-role
@@ -287,7 +288,7 @@ export default async function RolesPage({
           <form action={addSelfRoleAction} className="mt-4 space-y-3">
             <input type="hidden" name="guildId" value={access.guild.id} />
             <Field label="Role" htmlFor="selfRole">
-              <RolePicker roles={snapshot.roles} name="roleId" id="selfRole" />
+              <RolePicker roles={assignableRoles} name="roleId" id="selfRole" />
             </Field>
             <Button type="submit" variant="secondary">
               <Plus className="size-4" /> Add self-role

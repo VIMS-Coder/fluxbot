@@ -45,7 +45,7 @@ export default async function CommandsPage({
       />
 
       {saved ? <Banner tone="green">Saved.</Banner> : null}
-      {error ? <Banner tone="red">{decodeURIComponent(error)}</Banner> : null}
+      {error ? <Banner tone="red">{error}</Banner> : null}
 
       <div className="space-y-6">
         {categories.map((category) => {

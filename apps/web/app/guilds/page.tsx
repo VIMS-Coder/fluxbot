@@ -71,7 +71,7 @@ export default async function GuildsPage({
 
         {error ? (
           <div className="mt-6">
-            <Banner tone="red">{decodeURIComponent(error)}</Banner>
+            <Banner tone="red">{error}</Banner>
           </div>
         ) : null}
         {syncError ? (
