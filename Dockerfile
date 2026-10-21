@@ -27,7 +27,7 @@ ENV NODE_ENV=production
 COPY --from=builder --chown=node:node /app /app
 RUN cp -r apps/web/.next/static apps/web/.next/standalone/apps/web/.next/static \
  && cp deploy/entrypoint.sh /entrypoint.sh \
- && chmod +x /entrypoint.sh
+ && chmod 755 /entrypoint.sh
 
 USER node
 EXPOSE 3000
