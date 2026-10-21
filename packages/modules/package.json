@@ -1,0 +1,35 @@
+{
+  "name": "@fluxbot/modules",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Fluxbot feature modules (levels, fun, roles) and command catalog",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./catalog": {
+      "types": "./src/catalog.ts",
+      "default": "./src/catalog.ts"
+    },
+    "./config": {
+      "types": "./src/config.ts",
+      "default": "./src/config.ts"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@fluxbot/core": "workspace:*",
+    "@fluxbot/db": "workspace:*",
+    "zod": "^4.6.7",
+    "@fluxbot/fluxer": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.3",
+    "vitest": "^5.0.5"
+  }
+}

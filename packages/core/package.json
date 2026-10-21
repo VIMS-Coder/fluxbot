@@ -1,0 +1,26 @@
+{
+  "name": "@fluxbot/core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Command framework, runtime contracts, argument parsing and crypto",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@fluxbot/db": "workspace:*",
+    "zod": "^4.6.7",
+    "@fluxbot/fluxer": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.3",
+    "vitest": "^5.0.5"
+  }
+}

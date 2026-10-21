@@ -21,10 +21,14 @@
     "lint:fix": "biome check --write .",
     "format": "biome format --write .",
     "db:generate": "pnpm --filter @fluxbot/db generate",
-    "db:migrate": "pnpm --filter @fluxbot/db migrate"
+    "db:migrate": "pnpm --filter @fluxbot/db migrate",
+    "fake:instance": "node scripts/fake-fluxer.mjs",
+    "format:check": "biome format ."
   },
   "devDependencies": {
     "@biomejs/biome": "^2.6.2",
-    "typescript": "~5.9.3"
+    "@types/node": "^26.6.5",
+    "typescript": "~5.9.3",
+    "ws": "^8.19.0"
   }
 }

@@ -8,7 +8,8 @@
       "!**/dist",
       "!**/drizzle",
       "!**/next-env.d.ts",
-      "!**/coverage"
+      "!**/coverage",
+      "!**/*.md"
     ]
   },
   "formatter": {
@@ -20,7 +21,7 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "suspicious": {
         "noExplicitAny": "off"
       },

@@ -1,0 +1,21 @@
+{
+  "name": "@fluxbot/fluxer",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Fluxer protocol client: instance discovery, OAuth2, permissions",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.3",
+    "vitest": "^5.0.5"
+  }
+}

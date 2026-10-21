@@ -1,0 +1,27 @@
+{
+  "name": "@fluxbot/bot",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Fluxbot gateway runtime",
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "start": "tsx src/main.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@fluxerjs/core": "^3.3.0",
+    "@fluxbot/core": "workspace:*",
+    "@fluxbot/db": "workspace:*",
+    "@fluxbot/fluxer": "workspace:*",
+    "@fluxbot/modules": "workspace:*",
+    "dotenv": "^17.2.3"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "tsx": "^4.23.15",
+    "typescript": "~5.9.3",
+    "vitest": "^5.0.5"
+  }
+}
