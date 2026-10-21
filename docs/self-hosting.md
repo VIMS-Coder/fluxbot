@@ -45,6 +45,9 @@ Edit `.env`:
 | `ENCRYPTION_KEY` | `openssl rand -base64 32` | Encrypts stored OAuth tokens |
 | `POSTGRES_PASSWORD` | `openssl rand -base64 24` | Used by Compose |
 | `WEB_PORT` | `3000` | Host port for the dashboard |
+| `OPERATOR_NAME` | `Example Community` | Shown on `/privacy` and `/terms` |
+| `OPERATOR_CONTACT_EMAIL` | `privacy@example.com` | Contact for legal and deletion requests |
+| `OPERATOR_SUPPORT_URL` | your issue tracker | Fallback contact when no email is set |
 
 Leave `DATABASE_URL` as-is: Compose overrides it with the `postgres` hostname.
 
@@ -132,6 +135,24 @@ containers start. Pin image tags/digests if you prefer controlled rollouts.
 | `You need Manage Server` | Dashboard access is derived from Fluxer permissions, not a local account. Ask for `MANAGE_GUILD` or `ADMINISTRATOR`. |
 | Dashboard shows demo data | `DEMO_MODE=true` is still set. Turn it off and restart. |
 | `401` after a week | OAuth access tokens last 7 days; the refresh token rotates automatically. If the refresh token expired (30 days idle), sign in again. |
+
+## Legal pages and operator identity
+
+Fluxbot ships `/privacy` and `/terms` pages that describe what this deployment
+stores and the rules for using it. Set the operator details before exposing the
+dashboard:
+
+```bash
+OPERATOR_NAME="Your name or community"
+OPERATOR_CONTACT_EMAIL="privacy@example.com"
+OPERATOR_SUPPORT_URL="https://github.com/your-org/fluxbot/issues"
+```
+
+If `OPERATOR_CONTACT_EMAIL` is empty, the pages link to the support URL instead.
+
+These pages are plain-language templates, not legal advice. Review them for your
+jurisdiction, and update the retention statements if you enable features that
+store more data (logging, automod, bridges).
 
 ## Security checklist
 

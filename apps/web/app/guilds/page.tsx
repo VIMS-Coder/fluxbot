@@ -2,6 +2,7 @@ import { listGuildsForUser } from '@fluxbot/db';
 import { buildInviteUrl, invitePermissions } from '@fluxbot/fluxer';
 import { ArrowRight, Bot, Code2, LogOut, Plus } from 'lucide-react';
 import Link from 'next/link';
+import { SiteFooter } from '@/components/site-footer';
 import { Badge, Banner } from '@/components/ui';
 import { requireSession, syncGuildsForSession } from '@/lib/auth';
 import { getDb } from '@/lib/db';
@@ -175,6 +176,8 @@ export default async function GuildsPage({
           <span>Signed in as {session.user.fluxerId}</span>
         </div>
       </main>
+
+      <SiteFooter />
     </div>
   );
 }

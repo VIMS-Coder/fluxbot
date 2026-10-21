@@ -3,6 +3,24 @@
 All notable changes to Fluxbot are documented here. The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/) and [SemVer](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- Public `/privacy` and `/terms` pages. Operator name, contact email and support URL
+  are configurable with `OPERATOR_NAME`, `OPERATOR_CONTACT_EMAIL` and
+  `OPERATOR_SUPPORT_URL`.
+- `ROADMAP.md` covering the phases through v1.0, including the Discord ↔ Fluxer
+  bridge.
+- `docs/discord-bridge.md`: design for opt-in channel mirroring using bot ingress
+  and webhook egress, with sync semantics, data model, security and phasing.
+
+### Changed
+
+- The landing page, login page, server picker and guild sidebar link to the legal
+  pages.
+- The README links to the roadmap and the bridge design.
+
 ## [0.1.0] — 2026-10-22
 
 First public release. Engagement-first: levels, fun and roles, with a dashboard

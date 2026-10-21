@@ -148,6 +148,11 @@ behind a load balancer.
 - `scripts/fake-fluxer.mjs`: a local fake instance that exercises the full
   gateway → command → REST loop without a Fluxer deployment.
 
+## Planned extensions
+
+- **Discord ↔ Fluxer bridge:** opt-in channel mirroring with bots for ingress and
+  webhooks for egress. See [discord-bridge.md](discord-bridge.md).
+
 ## Protocol references
 
 - [Instance discovery](https://docs.fluxer.app/http-api/instance/)

@@ -63,7 +63,7 @@ export function GuildSidebar({
             </button>
           </form>
         </div>
-        <div className="flex items-center gap-3 px-1 text-xs text-zinc-600">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 px-1 text-xs text-zinc-600">
           <a
             href="https://github.com/martintondel02/fluxbot"
             className="inline-flex items-center gap-1 hover:text-zinc-400"
@@ -72,7 +72,13 @@ export function GuildSidebar({
           >
             <Code2 className="size-3.5" /> Source
           </a>
-          <span className="truncate">{env.instanceOrigin || 'demo instance'}</span>
+          <Link href="/privacy" className="hover:text-zinc-400">
+            Privacy
+          </Link>
+          <Link href="/terms" className="hover:text-zinc-400">
+            Terms
+          </Link>
+          <span className="w-full truncate">{env.instanceOrigin || 'demo instance'}</span>
         </div>
       </div>
     </aside>

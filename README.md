@@ -48,9 +48,11 @@ Fluxbot treats the dashboard as the primary interface:
 | **Moderation** | 🚧 Next | Warnings/cases, timeout, kick, ban, tempban, purge, mod log |
 | **Logging & automod** | 🚧 Next | Message/member/channel logs, rule engine with a test simulator |
 | **Community** | 📋 Planned | Welcome messages, tickets, giveaways, temp voice channels |
+| **Bridges** | 📋 Planned | Discord ↔ Fluxer channel mirroring: bots for ingress, webhooks for faithful names and avatars |
 | **Scale-out** | 📋 Planned | Sharding, Redis, multi-instance public bot mode |
 
-See the [command reference](docs/commands.md) and [architecture notes](docs/architecture.md).
+See the [command reference](docs/commands.md), [architecture notes](docs/architecture.md),
+[Discord bridge design](docs/discord-bridge.md) and the full [roadmap](ROADMAP.md).
 
 ## Quick start (Docker)
 
@@ -88,6 +90,7 @@ openssl rand -base64 32   # ENCRYPTION_KEY
 | **Commands** | Per-command enable, permission level and cooldown override |
 | **Audit log** | Every change with actor, before/after JSON |
 | **Settings** | Prefix, invite link with required permissions, instance and bot status |
+| **Legal** | `/privacy` and `/terms`, customizable with the operator's name and contact |
 
 ## How it works
 
@@ -177,10 +180,14 @@ container image.
 
 ## Roadmap
 
+See **[ROADMAP.md](ROADMAP.md)** for the full plan. The short version:
+
 1. **v0.2 — Moderation:** cases, timeout, kick, ban, tempban, purge, mod log.
 2. **v0.3 — Logging & automod:** event logs, rule engine, dashboard simulator.
 3. **v0.4 — Community:** welcome, tickets, giveaways, temp voice.
-4. **v1.0 — Scale:** sharding, Redis, multi-instance public-bot mode, i18n.
+4. **v0.5 — Discord ↔ Fluxer bridge:** bot ingress + webhook egress, opt-in per
+   channel. Design: [docs/discord-bridge.md](docs/discord-bridge.md).
+5. **v1.0 — Scale:** sharding, Redis, multi-instance public-bot mode, i18n.
 
 ## Project structure
 
@@ -192,7 +199,8 @@ packages/db         schema, migrations, repositories
 packages/core       command framework and shared primitives
 packages/modules    engagement modules + command catalog
 deploy/             container entrypoint
-docs/               self-hosting, architecture, commands
+docs/               self-hosting, architecture, commands, bridge design
+ROADMAP.md          phases and priorities
 scripts/            fake Fluxer instance for local testing
 ```
 

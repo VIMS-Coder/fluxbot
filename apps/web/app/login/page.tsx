@@ -1,5 +1,6 @@
 import { ArrowLeft, LogIn } from 'lucide-react';
 import Link from 'next/link';
+import { SiteFooter } from '@/components/site-footer';
 import { Banner } from '@/components/ui';
 import { env, redirectUri } from '@/lib/env';
 
@@ -61,6 +62,8 @@ export default async function LoginPage({
           Instance: <code className="text-zinc-400">{env.instanceOrigin || 'demo mode'}</code>
         </p>
       </div>
+
+      <SiteFooter className="mt-10" />
     </div>
   );
 }

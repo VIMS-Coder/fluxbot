@@ -49,6 +49,11 @@ export const env = {
   },
   demoMode: process.env.DEMO_MODE === 'true',
   secureCookies: (process.env.DASHBOARD_ORIGIN ?? '').startsWith('https://'),
+  /** Shown on /privacy and /terms. */
+  operatorName: process.env.OPERATOR_NAME?.trim() || 'the Fluxbot operator',
+  operatorContactEmail: process.env.OPERATOR_CONTACT_EMAIL?.trim() || '',
+  supportUrl:
+    process.env.OPERATOR_SUPPORT_URL?.trim() || 'https://github.com/martintondel02/fluxbot/issues',
 };
 
 export const redirectUri = `${env.dashboardOrigin}/auth/callback`;

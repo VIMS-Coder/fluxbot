@@ -1,6 +1,7 @@
 import { ArrowRight, BarChart3, Code2, Server, Sparkles, UserCog } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import { SiteFooter } from '@/components/site-footer';
 import { Code } from '@/components/ui';
 import { getSession } from '@/lib/auth';
 import { env } from '@/lib/env';
@@ -133,9 +134,7 @@ export default async function HomePage() {
         ) : null}
       </main>
 
-      <footer className="border-t border-white/10 pt-6 text-xs text-zinc-600">
-        Fluxbot is an independent community project and is not affiliated with Fluxer.
-      </footer>
+      <SiteFooter className="mt-0" />
     </div>
   );
 }
