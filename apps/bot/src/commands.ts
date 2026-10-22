@@ -52,6 +52,7 @@ export class CommandIndex {
 
 export interface CommandDeps {
   db: Database;
+  instanceId: string;
   actions: FluxerActions;
   configs: ConfigService;
   registry: GuildRegistry;

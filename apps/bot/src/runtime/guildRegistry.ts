@@ -57,6 +57,12 @@ export class GuildRegistry {
 
     const existing = await getGuildByFluxerId(this.db, this.instanceId, guild.id);
     if (existing) {
+      // The dashboard may have created this row when a user logged in. Joining
+      // the guild has to flip the presence flag, otherwise the dashboard keeps
+      // saying "bot not installed".
+      if (!existing.botPresent) {
+        await setGuildBotPresent(this.db, this.instanceId, guild.id, true);
+      }
       const entry = { uuid: existing.id, prefix: existing.prefix };
       this.byFluxerId.set(guild.id, entry);
       return entry;
@@ -71,6 +77,17 @@ export class GuildRegistry {
     const entry = { uuid: row.id, prefix: row.prefix };
     this.byFluxerId.set(guild.id, entry);
     this.logger.info('Joined guild', { guildId: guild.id, name: guild.name });
+    return entry;
+  }
+
+  /** Mark a guild as joined, even when the row already existed. */
+  async markPresent(guild: {
+    id: string;
+    name: string;
+    icon?: string | null;
+  }): Promise<GuildEntry> {
+    const entry = await this.ensure(guild);
+    await setGuildBotPresent(this.db, this.instanceId, guild.id, true);
     return entry;
   }
 

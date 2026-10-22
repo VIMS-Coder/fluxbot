@@ -1,5 +1,5 @@
 import { type Logger, normalizeReactionEmoji } from '@fluxbot/core';
-import { type Database, upsertGuildSnapshot } from '@fluxbot/db';
+import { type Database, setBotPresence, upsertGuildSnapshot } from '@fluxbot/db';
 import { onRolesMemberAdd, onRolesReaction } from '@fluxbot/modules';
 import type {
   Client,
@@ -129,7 +129,7 @@ export function wireEvents(deps: EventDeps): void {
 
   client.on(Events.GuildCreate, (guild: Guild) => {
     void deps.registry
-      .ensure(guild)
+      .markPresent(guild)
       .then(() => writeSnapshot(guild, deps))
       .catch((error) =>
         logger.error('Guild create handler crashed', { error: (error as Error).message }),
@@ -138,7 +138,7 @@ export function wireEvents(deps: EventDeps): void {
 
   client.on(Events.GuildUpdate, (_oldGuild: Guild, guild: Guild) => {
     void deps.registry
-      .ensure(guild)
+      .markPresent(guild)
       .then(() => scheduleSnapshot(guild, deps))
       .catch(() => {});
   });
@@ -172,9 +172,18 @@ export function wireEvents(deps: EventDeps): void {
       user: client.user?.username,
       guilds: client.guilds.cache.size,
     });
-    for (const guild of client.guilds.cache.values()) {
-      void writeSnapshot(guild, deps);
-    }
+
+    // Reconcile presence for every guild the gateway knows about. This heals
+    // rows created by a dashboard login before the bot joined.
+    void (async () => {
+      const guildIds = [...client.guilds.cache.keys()];
+      await setBotPresence(deps.db, deps.instanceId, guildIds);
+      for (const guild of client.guilds.cache.values()) {
+        await writeSnapshot(guild, deps);
+      }
+    })().catch((error) => {
+      logger.error('Ready reconciliation failed', { error: (error as Error).message });
+    });
   });
 
   client.on(Events.Error, (error) => {

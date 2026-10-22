@@ -1,12 +1,21 @@
 import type { Logger } from '@fluxbot/core';
 import type { Database, Sql } from '@fluxbot/db';
-import { claimJobs, completeJob, deleteExpiredSessions, failJob, setBotStatus } from '@fluxbot/db';
+import {
+  claimJobs,
+  completeJob,
+  deleteExpiredSessions,
+  failJob,
+  setBotPresence,
+  setBotStatus,
+} from '@fluxbot/db';
 import { fetchGatewayBot, type InstanceDiscovery } from '@fluxbot/fluxer';
+import type { Client } from '@fluxerjs/core';
 import type { GuildRegistry } from './runtime/guildRegistry';
 
 export interface SchedulerDeps {
   db: Database;
   sql: Sql;
+  client: Client;
   instanceId: string;
   discovery: InstanceDiscovery;
   botToken: string;
@@ -34,8 +43,11 @@ export function startScheduler(deps: SchedulerDeps): () => void {
         discovery: deps.discovery,
         botToken: deps.botToken,
       });
+      const guildCount = await setBotPresence(deps.db, deps.instanceId, [
+        ...deps.client.guilds.cache.keys(),
+      ]);
       await setBotStatus(deps.db, deps.instanceId, {
-        guildCount: deps.registry.size,
+        guildCount,
         shardCount: info.shards,
         latencyMs: null,
         version: deps.version,

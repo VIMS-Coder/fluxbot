@@ -66,6 +66,7 @@ async function main(): Promise<void> {
   const deps: CommandDeps & { client: Client } = {
     client,
     db,
+    instanceId: instance.id,
     actions: new FluxerActions(client),
     configs,
     registry,
@@ -107,6 +108,7 @@ async function main(): Promise<void> {
   const stopScheduler = startScheduler({
     db,
     sql,
+    client,
     instanceId: instance.id,
     discovery,
     botToken: env.botToken,
