@@ -21,6 +21,8 @@ All notable changes to Fluxbot are documented here. The format loosely follows
   a second migration.
 - 12 new tests (85 total) for welcome rendering, giveaway draws and voice names.
 - Screenshots in `docs/screenshots/` and a gallery in the README.
+- Refreshed landing page with a real dashboard preview, a community feature strip,
+  six capability cards and a self-hosting section.
 - Public `/privacy` and `/terms` pages. Operator name, contact email and support URL
   are configurable with `OPERATOR_NAME`, `OPERATOR_CONTACT_EMAIL` and
   `OPERATOR_SUPPORT_URL`.

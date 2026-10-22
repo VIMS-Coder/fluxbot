@@ -56,6 +56,8 @@ See the [command reference](docs/commands.md), [architecture notes](docs/archite
 
 ## Screenshots
 
+![Landing page](docs/screenshots/landing.png)
+
 | Server picker | Overview |
 |---|---|
 | ![Server picker](docs/screenshots/servers.png) | ![Overview](docs/screenshots/overview.png) |
