@@ -182,12 +182,35 @@ export const FULL_PERMISSIONS: PermissionName[] = [
   'PIN_MESSAGES',
 ];
 
-export function invitePermissions(
-  modules: ReadonlyArray<'levels' | 'fun' | 'roles' | 'moderation'>,
-): bigint {
+export type InviteModule =
+  | 'levels'
+  | 'fun'
+  | 'roles'
+  | 'welcome'
+  | 'giveaways'
+  | 'tickets'
+  | 'tempvoice'
+  | 'moderation';
+
+export function invitePermissions(modules: ReadonlyArray<InviteModule>): bigint {
   const names = new Set<PermissionName>(['VIEW_CHANNEL', 'SEND_MESSAGES', 'EMBED_LINKS']);
+
   if (modules.includes('levels')) {
-    for (const name of ['SEND_MESSAGES', 'EMBED_LINKS', 'READ_MESSAGE_HISTORY'] as const) {
+    for (const name of ['READ_MESSAGE_HISTORY'] as const) names.add(name);
+  }
+  if (modules.includes('welcome')) {
+    for (const name of ['SEND_MESSAGES', 'EMBED_LINKS'] as const) names.add(name);
+  }
+  if (modules.includes('fun')) {
+    for (const name of ['SEND_MESSAGES', 'EMBED_LINKS'] as const) names.add(name);
+  }
+  if (modules.includes('giveaways')) {
+    for (const name of [
+      'ADD_REACTIONS',
+      'READ_MESSAGE_HISTORY',
+      'EMBED_LINKS',
+      'SEND_MESSAGES',
+    ] as const) {
       names.add(name);
     }
   }
@@ -201,8 +224,24 @@ export function invitePermissions(
       names.add(name);
     }
   }
+  if (modules.includes('tickets')) {
+    for (const name of [
+      'CREATE_PRIVATE_THREADS',
+      'SEND_MESSAGES_IN_THREADS',
+      'MANAGE_THREADS',
+      'READ_MESSAGE_HISTORY',
+    ] as const) {
+      names.add(name);
+    }
+  }
+  if (modules.includes('tempvoice')) {
+    for (const name of ['MANAGE_CHANNELS', 'MOVE_MEMBERS', 'CONNECT'] as const) {
+      names.add(name);
+    }
+  }
   if (modules.includes('moderation')) {
     for (const name of MODERATION_PERMISSIONS) names.add(name);
   }
+
   return namesToPermissions([...names]);
 }

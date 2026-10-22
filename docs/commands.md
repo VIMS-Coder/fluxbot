@@ -49,6 +49,21 @@ Aliases are shown in parentheses.
 Reaction roles are configured from the dashboard; members toggle them by reacting
 to the menu message.
 
+## Community
+
+| Command | Description |
+|---|---|
+| `welcome test` | Send the configured welcome message to its channel (requires Manage Server) |
+| `giveaway start <minutes> <winners> <prize>` (`gw`) | Start a reaction-entry giveaway (requires Manage Server) |
+| `giveaway end [id]` | End a giveaway now and draw winners (requires Manage Server) |
+| `giveaway list` | List active giveaways (requires Manage Server) |
+| `ticket` | Open a private-thread support ticket |
+| `ticket close` | Close and archive the current ticket (staff or opener) |
+| `ticket add <user>` | Add a member to the current ticket |
+
+Temporary voice channels need no command: join the configured hub channel and the
+bot creates a channel for you, then removes it when the last person leaves.
+
 ## Permissions and cooldowns
 
 - Commands that require Fluxer permissions are enforced from the member's

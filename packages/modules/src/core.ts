@@ -57,6 +57,7 @@ const helpCommand: CommandDefinition = {
       { key: 'levels', label: 'Levels' },
       { key: 'fun', label: 'Fun' },
       { key: 'roles', label: 'Roles' },
+      { key: 'community', label: 'Community' },
       { key: 'moderation', label: 'Moderation' },
     ];
 

@@ -8,7 +8,16 @@ import type {
   SendPayload,
 } from '@fluxbot/core';
 import { hasPermission, Permission, type PermissionName } from '@fluxbot/fluxer';
-import type { Channel, Client, Guild, GuildMember, Message, Role } from '@fluxerjs/core';
+import type {
+  Channel,
+  Client,
+  Guild,
+  GuildMember,
+  Message,
+  Role,
+  ThreadChannel,
+} from '@fluxerjs/core';
+import { ChannelType } from '@fluxerjs/core';
 
 function textChannel(client: Client, channelId: string) {
   return client.channels.fetch(channelId).then((channel: Channel) => {
@@ -120,6 +129,68 @@ export class FluxerActions implements BotActions {
   async guildMemberCount(guildId: string): Promise<number> {
     const guild = this.guild(guildId);
     return guild.memberCount ?? guild.members.size;
+  }
+
+  async editMessage(channelId: string, messageId: string, payload: SendPayload): Promise<void> {
+    const channel = await textChannel(this.client, channelId);
+    const message = await channel.messages.fetch(messageId);
+    await message.edit({
+      content: payload.content,
+      embeds: payload.embeds as never,
+    });
+  }
+
+  async createPrivateThread(channelId: string, name: string): Promise<{ id: string }> {
+    const channel = await textChannel(this.client, channelId);
+    if (!('threads' in channel)) {
+      throw new Error(`Channel ${channelId} cannot hold threads`);
+    }
+    const thread = await channel.threads.create({
+      name: name.slice(0, 100),
+      type: ChannelType.PrivateThread,
+      invitable: false,
+    });
+    return { id: thread.id };
+  }
+
+  async addThreadMember(threadId: string, userId: string): Promise<void> {
+    const thread = await this.thread(threadId);
+    await thread.members.add(userId);
+  }
+
+  async archiveThread(threadId: string): Promise<void> {
+    const thread = await this.thread(threadId);
+    await thread.setArchived(true);
+  }
+
+  async createVoiceChannel(
+    guildId: string,
+    options: { name: string; parentId?: string | null; userLimit?: number },
+  ): Promise<{ id: string }> {
+    const guild = this.guild(guildId);
+    const channel = await guild.createChannel({
+      name: options.name.slice(0, 100),
+      type: ChannelType.GuildVoice,
+      parentId: options.parentId ?? null,
+      userLimit: options.userLimit ?? 0,
+    });
+    return { id: channel.id };
+  }
+
+  async deleteChannel(channelId: string): Promise<void> {
+    const channel = await this.client.channels.fetch(channelId);
+    await channel.delete();
+  }
+
+  async moveMember(guildId: string, userId: string, channelId: string): Promise<void> {
+    const member = await this.fetchSdkMember(guildId, userId);
+    await member.move(channelId);
+  }
+
+  private async thread(threadId: string): Promise<ThreadChannel> {
+    const channel = await this.client.channels.fetch(threadId);
+    if (!channel.isThread()) throw new Error(`Channel ${threadId} is not a thread`);
+    return channel;
   }
 
   private async fetchSdkMember(guildId: string, userId: string): Promise<GuildMember> {

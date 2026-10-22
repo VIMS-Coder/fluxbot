@@ -10,7 +10,7 @@ export interface CatalogCommand {
   aliases: string[];
   description: string;
   usage: string;
-  category: 'core' | 'levels' | 'fun' | 'roles' | 'moderation';
+  category: 'core' | 'levels' | 'fun' | 'roles' | 'community' | 'moderation';
   module: string;
   guildOnly: boolean;
   userPermissions: string[];
@@ -177,10 +177,40 @@ export const commandCatalog: CatalogCommand[] = [
     guildOnly: true,
     userPermissions: [],
   },
+  {
+    name: 'welcome',
+    aliases: [],
+    description: 'Preview the welcome message',
+    usage: 'welcome test',
+    category: 'community',
+    module: 'welcome',
+    guildOnly: true,
+    userPermissions: ['MANAGE_GUILD'],
+  },
+  {
+    name: 'giveaway',
+    aliases: ['gw'],
+    description: 'Start, end or list giveaways',
+    usage: 'giveaway <start|end|list> [...]',
+    category: 'community',
+    module: 'giveaways',
+    guildOnly: true,
+    userPermissions: ['MANAGE_GUILD'],
+  },
+  {
+    name: 'ticket',
+    aliases: [],
+    description: 'Open, close or add someone to a support ticket',
+    usage: 'ticket [open|close|add <user>]',
+    category: 'community',
+    module: 'tickets',
+    guildOnly: true,
+    userPermissions: [],
+  },
 ];
 
 export interface CatalogModule {
-  id: 'core' | 'levels' | 'fun' | 'roles';
+  id: 'core' | 'levels' | 'fun' | 'roles' | 'welcome' | 'giveaways' | 'tickets' | 'tempvoice';
   name: string;
   description: string;
   /** Whether the module appears in the dashboard module grid. */
@@ -204,6 +234,30 @@ export const moduleCatalog: CatalogModule[] = [
     id: 'roles',
     name: 'Roles',
     description: 'Reaction roles, join auto-roles and self-assignable role menus.',
+    configurable: true,
+  },
+  {
+    id: 'welcome',
+    name: 'Welcome',
+    description: 'Join and leave messages with variables and a live preview.',
+    configurable: true,
+  },
+  {
+    id: 'giveaways',
+    name: 'Giveaways',
+    description: 'Reaction-entry giveaways with timed draws and winner announcements.',
+    configurable: true,
+  },
+  {
+    id: 'tickets',
+    name: 'Tickets',
+    description: 'Private-thread support tickets with staff roles.',
+    configurable: true,
+  },
+  {
+    id: 'tempvoice',
+    name: 'Temp voice',
+    description: 'Join-to-create voice channels that disappear when empty.',
     configurable: true,
   },
   {

@@ -1,6 +1,20 @@
 import { type Logger, normalizeReactionEmoji } from '@fluxbot/core';
-import { type Database, setBotPresence, upsertGuildSnapshot } from '@fluxbot/db';
-import { onRolesMemberAdd, onRolesReaction } from '@fluxbot/modules';
+import {
+  createTempVoice,
+  type Database,
+  deleteTempVoice,
+  getTempVoiceByChannel,
+  setBotPresence,
+  upsertGuildSnapshot,
+} from '@fluxbot/db';
+import {
+  onGiveawayReaction,
+  onRolesMemberAdd,
+  onRolesReaction,
+  renderVoiceName,
+  renderWelcome,
+} from '@fluxbot/modules';
+import { tempVoiceConfigSchema, welcomeConfigSchema } from '@fluxbot/modules/config';
 import type {
   Client,
   Guild,
@@ -19,7 +33,18 @@ export interface EventDeps extends CommandDeps {
   logger: Logger;
 }
 
+interface VoiceStateLike {
+  guild_id?: string | null;
+  channel_id: string | null;
+  user_id: string;
+  member?: { user?: { bot?: boolean } };
+}
+
 const pendingSnapshots = new Map<string, NodeJS.Timeout>();
+
+/** guildId → userId → current voice channel (null when disconnected). */
+const voiceByUser = new Map<string, Map<string, string | null>>();
+const pendingTempChannels = new Set<string>();
 
 async function writeSnapshot(guild: Guild, deps: EventDeps): Promise<void> {
   try {
@@ -57,9 +82,9 @@ function scheduleSnapshot(guild: Guild | null, deps: EventDeps): void {
   pendingSnapshots.set(guild.id, timer);
 }
 
-async function rolesContextFor(guild: Guild, channelId: string, deps: EventDeps) {
+async function contextFor(guild: Guild, channelId: string, deps: EventDeps, moduleId: string) {
   const entry = await deps.registry.ensure(guild);
-  const config = await deps.configs.get(entry.uuid, 'roles');
+  const config = await deps.configs.get(entry.uuid, moduleId);
   return createRuntimeContext(deps, {
     guild,
     guildUuid: entry.uuid,
@@ -75,6 +100,121 @@ async function rolesContextFor(guild: Guild, channelId: string, deps: EventDeps)
     config,
     isCommand: false,
   });
+}
+
+async function sendWelcome(
+  member: { id: string; name: string },
+  guild: Guild,
+  event: 'join' | 'leave',
+  deps: EventDeps,
+): Promise<void> {
+  const entry = await deps.registry.ensure(guild);
+  const config = welcomeConfigSchema.parse(await deps.configs.get(entry.uuid, 'welcome'));
+  if (!config.enabled || !config.channelId) return;
+  if (event === 'leave' && !config.sendLeave) return;
+
+  const memberCount = await deps.actions.guildMemberCount(guild.id);
+  const body = renderWelcome(event === 'join' ? config.joinMessage : config.leaveMessage, {
+    mention: `<@${member.id}>`,
+    name: member.name,
+    server: guild.name,
+    count: memberCount,
+  });
+
+  try {
+    await deps.actions.send(config.channelId, {
+      embeds: [
+        {
+          description: body,
+          color: event === 'join' ? 0x22c55e : 0x71717a,
+        },
+      ],
+    });
+  } catch (error) {
+    deps.logger.warn('Welcome message failed', {
+      guildId: guild.id,
+      channelId: config.channelId,
+      error: (error as Error).message,
+    });
+  }
+}
+
+function countInChannel(guildId: string, channelId: string): number {
+  const users = voiceByUser.get(guildId);
+  if (!users) return 0;
+  let count = 0;
+  for (const channel of users.values()) {
+    if (channel === channelId) count += 1;
+  }
+  return count;
+}
+
+async function handleVoiceState(data: VoiceStateLike, deps: EventDeps): Promise<void> {
+  if (!data.guild_id || data.member?.user?.bot) return;
+
+  const guild = deps.client.guilds.cache.get(data.guild_id);
+  if (!guild) return;
+
+  const entry = await deps.registry.ensure(guild);
+  const config = tempVoiceConfigSchema.parse(await deps.configs.get(entry.uuid, 'tempvoice'));
+  if (!config.enabled || !config.hubChannelId) return;
+
+  const users = voiceByUser.get(guild.id) ?? new Map<string, string | null>();
+  voiceByUser.set(guild.id, users);
+
+  const previous = users.get(data.user_id) ?? null;
+  users.set(data.user_id, data.channel_id);
+
+  // Clean up a temporary channel once its last occupant leaves.
+  if (previous && previous !== data.channel_id) {
+    const temp = await getTempVoiceByChannel(deps.db, previous).catch(() => null);
+    if (temp && countInChannel(guild.id, previous) === 0) {
+      try {
+        await deps.actions.deleteChannel(previous);
+      } catch (error) {
+        deps.logger.warn('Could not delete temporary voice channel', {
+          channelId: previous,
+          error: (error as Error).message,
+        });
+      }
+      await deleteTempVoice(deps.db, previous).catch(() => {});
+    }
+  }
+
+  if (data.channel_id !== config.hubChannelId) return;
+  if (pendingTempChannels.has(data.user_id)) return;
+
+  pendingTempChannels.add(data.user_id);
+  try {
+    const member = await deps.actions.fetchMember(guild.id, data.user_id);
+    const name = renderVoiceName(
+      config.nameTemplate,
+      member?.displayName ?? member?.username ?? 'Voice',
+    );
+
+    const channel = await deps.actions.createVoiceChannel(guild.id, {
+      name,
+      parentId: config.categoryId,
+      userLimit: config.userLimit,
+    });
+
+    await createTempVoice(deps.db, {
+      guildId: entry.uuid,
+      channelId: channel.id,
+      ownerId: data.user_id,
+    });
+
+    await deps.actions.moveMember(guild.id, data.user_id, channel.id);
+    users.set(data.user_id, channel.id);
+  } catch (error) {
+    deps.logger.warn('Could not create temporary voice channel', {
+      guildId: guild.id,
+      userId: data.user_id,
+      error: (error as Error).message,
+    });
+  } finally {
+    pendingTempChannels.delete(data.user_id);
+  }
 }
 
 export function wireEvents(deps: EventDeps): void {
@@ -121,9 +261,45 @@ export function wireEvents(deps: EventDeps): void {
         config,
         isCommand: false,
       });
+
       await onRolesMemberAdd(ctx, member.id);
+      await sendWelcome(
+        { id: member.id, name: member.displayName ?? member.user.username },
+        guild,
+        'join',
+        deps,
+      );
     })().catch((error) => {
       logger.error('Member add handler crashed', { error: (error as Error).message });
+    });
+  });
+
+  client.on(Events.GuildMemberRemove, (member) => {
+    void (async () => {
+      const partial = member as unknown as {
+        guild: Guild;
+        id: string;
+        user?: { username: string };
+        displayName?: string;
+      };
+      if (!partial.guild) return;
+      await sendWelcome(
+        {
+          id: partial.id,
+          name: partial.displayName ?? partial.user?.username ?? partial.id,
+        },
+        partial.guild,
+        'leave',
+        deps,
+      );
+    })().catch((error) => {
+      logger.error('Member remove handler crashed', { error: (error as Error).message });
+    });
+  });
+
+  client.on(Events.VoiceStateUpdate, (data) => {
+    void handleVoiceState(data as VoiceStateLike, deps).catch((error) => {
+      logger.error('Voice state handler crashed', { error: (error as Error).message });
     });
   });
 
@@ -208,13 +384,18 @@ async function handleReaction(
   const emoji = normalizeReactionEmoji(payload.emoji);
   if (!emoji) return;
 
-  const ctx = await rolesContextFor(guild, payload.channelId, deps);
-  await onRolesReaction(ctx, {
+  const event = {
     userId: payload.userId,
     channelId: payload.channelId,
     messageId: payload.messageId,
     emoji,
     added,
     isBot: payload.user.bot ?? false,
-  });
+  };
+
+  const rolesCtx = await contextFor(guild, payload.channelId, deps, 'roles');
+  await onRolesReaction(rolesCtx, event);
+
+  const giveawayCtx = await contextFor(guild, payload.channelId, deps, 'giveaways');
+  await onGiveawayReaction(giveawayCtx, event);
 }

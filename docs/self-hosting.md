@@ -113,6 +113,19 @@ cat fluxbot-backup.sql | docker compose exec -T postgres psql -U fluxbot fluxbot
 The `.env` file holds the credentials needed to use that backup. Back it up
 separately, in a secret manager.
 
+## Updating the bot's permissions
+
+New modules can require new Fluxer permissions. After upgrading:
+
+1. Open the dashboard → **Settings**.
+2. Copy the generated invite link under **Invite link**.
+3. Open it and authorise the bot again on each server. This updates its role; it
+   does not remove existing configuration.
+
+The community release adds thread permissions for tickets and channel/move
+permissions for temporary voice. Without them, those modules will report missing
+permissions instead of failing silently.
+
 ## 6. Upgrades
 
 ```bash

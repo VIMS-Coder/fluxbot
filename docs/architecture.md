@@ -113,6 +113,7 @@ The bot still performs its own checks before acting (role hierarchy, `MANAGE_ROL
 | Core | `instances`, `users`, `sessions`, `guilds`, `guild_members` |
 | Configuration | `guild_configs`, `guild_snapshots`, `command_settings` |
 | Engagement | `xp_users`, `level_rewards`, `reaction_roles`, `auto_roles`, `self_roles` |
+| Community | `giveaways`, `giveaway_entries`, `tickets`, `temp_voices` |
 | Operations | `audit_log`, `bot_status`, `scheduled_jobs`, `analytics_events` |
 
 Every guild-scoped row is keyed by the local guild UUID, which itself belongs to

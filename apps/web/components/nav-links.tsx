@@ -8,6 +8,7 @@ import {
   Sparkles,
   Terminal,
   UserCog,
+  Users,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -18,6 +19,7 @@ const items = [
   { href: '/levels', label: 'Levels', icon: BarChart3 },
   { href: '/fun', label: 'Fun', icon: Sparkles },
   { href: '/roles', label: 'Roles', icon: UserCog },
+  { href: '/community', label: 'Community', icon: Users },
   { href: '/commands', label: 'Commands', icon: Terminal },
   { href: '/audit', label: 'Audit log', icon: ScrollText },
   { href: '/settings', label: 'Settings', icon: Settings },

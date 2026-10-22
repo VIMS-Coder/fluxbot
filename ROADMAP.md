@@ -30,10 +30,13 @@ Message/member/channel/voice logs with per-event routing. An automod rule engine
 (links, invites, words, mentions, caps, spam, raid mode) with a dashboard
 simulator and a strike system.
 
-## v0.4 — Community 📋
+## v0.4 — Community ✅ shipped
 
-Welcome/goodbye messages, tickets (private threads), giveaways, polls, tags and
-temporary voice channels.
+Welcome/leave messages with variables, reaction giveaways with timed draws,
+private-thread support tickets, and join-to-create temporary voice channels.
+Configured from the **Community** page in the dashboard.
+
+Shipped before moderation and logging by request; those remain the next phases.
 
 ## v0.5 — Bridges: Discord ↔ Fluxer 📋
 

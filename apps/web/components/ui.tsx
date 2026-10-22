@@ -113,6 +113,21 @@ export function Select({ className, children, ...props }: SelectHTMLAttributes<H
   );
 }
 
+export function Textarea({
+  className,
+  ...props
+}: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
+  return (
+    <textarea
+      className={cn(
+        'w-full rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-violet-400 focus:outline-none',
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
 export function Field({
   label,
   hint,

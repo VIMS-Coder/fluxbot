@@ -20,6 +20,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   levels: 'Levels',
   fun: 'Fun',
   roles: 'Roles',
+  community: 'Community',
   moderation: 'Moderation',
 };
 
@@ -35,7 +36,7 @@ export default async function CommandsPage({
   const access = await requireGuildAdmin(guildId);
   const settings = await getCommandsPageData(access.guild.id);
 
-  const categories = ['core', 'levels', 'fun', 'roles', 'moderation'];
+  const categories = ['core', 'levels', 'fun', 'roles', 'community', 'moderation'];
 
   return (
     <>

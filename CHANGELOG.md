@@ -7,6 +7,20 @@ All notable changes to Fluxbot are documented here. The format loosely follows
 
 ### Added
 
+- **Community module group:**
+  - Welcome/leave messages with `{user}`, `{name}`, `{server}` and `{count}` variables,
+    a live preview and a test button.
+  - Reaction giveaways with timed draws, entry tracking, automatic winner selection,
+    message updates and `!giveaway` commands.
+  - Private-thread support tickets with a staff role, `!ticket open|close|add`,
+    and a parent channel.
+  - Join-to-create temporary voice channels that are deleted when empty.
+- **Community dashboard page** with configuration, giveaway management, ticket
+  settings and active temporary channels.
+- Community tables (`giveaways`, `giveaway_entries`, `tickets`, `temp_voices`) and
+  a second migration.
+- 12 new tests (85 total) for welcome rendering, giveaway draws and voice names.
+- Screenshots in `docs/screenshots/` and a gallery in the README.
 - Public `/privacy` and `/terms` pages. Operator name, contact email and support URL
   are configurable with `OPERATOR_NAME`, `OPERATOR_CONTACT_EMAIL` and
   `OPERATOR_SUPPORT_URL`.
@@ -20,6 +34,10 @@ All notable changes to Fluxbot are documented here. The format loosely follows
 - The landing page, login page, server picker and guild sidebar link to the legal
   pages.
 - The README links to the roadmap and the bridge design.
+- The invite permission calculator now includes community modules. Installations
+  created before v0.4 should re-open the invite link from Settings to grant thread
+  and voice permissions.
+- Relative timestamps now render future times as “in 2h” instead of “just now”.
 
 ## [0.1.0] — 2026-10-22
 

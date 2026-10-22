@@ -14,7 +14,15 @@ import {
   PageHeader,
   Stat,
 } from '@/components/ui';
-import { getFunConfig, getLevelsConfig, getRolesConfig } from '@/lib/data';
+import {
+  getFunConfig,
+  getGiveawaysConfig,
+  getLevelsConfig,
+  getRolesConfig,
+  getTempVoiceConfig,
+  getTicketsConfig,
+  getWelcomeConfig,
+} from '@/lib/data';
 import { getDb } from '@/lib/db';
 import { env } from '@/lib/env';
 import { relativeTime } from '@/lib/format';
@@ -34,18 +42,29 @@ export default async function SettingsPage({
   const { saved, error } = await searchParams;
   const access = await requireGuildAdmin(guildId);
 
-  const [discovery, bot, levels, fun, roles] = await Promise.all([
-    getDiscovery(),
-    getBotStatus(getDb(), access.session.instance.id),
-    getLevelsConfig(access.guild.id),
-    getFunConfig(access.guild.id),
-    getRolesConfig(access.guild.id),
-  ]);
+  const [discovery, bot, levels, fun, roles, welcome, giveaways, tickets, tempVoice] =
+    await Promise.all([
+      getDiscovery(),
+      getBotStatus(getDb(), access.session.instance.id),
+      getLevelsConfig(access.guild.id),
+      getFunConfig(access.guild.id),
+      getRolesConfig(access.guild.id),
+      getWelcomeConfig(access.guild.id),
+      getGiveawaysConfig(access.guild.id),
+      getTicketsConfig(access.guild.id),
+      getTempVoiceConfig(access.guild.id),
+    ]);
 
-  const enabledModules: Array<'levels' | 'fun' | 'roles'> = [];
+  const enabledModules: Array<
+    'levels' | 'fun' | 'roles' | 'welcome' | 'giveaways' | 'tickets' | 'tempvoice'
+  > = [];
   if (levels.enabled) enabledModules.push('levels');
   if (fun.enabled) enabledModules.push('fun');
   if (roles.enabled) enabledModules.push('roles');
+  if (welcome.enabled) enabledModules.push('welcome');
+  if (giveaways.enabled) enabledModules.push('giveaways');
+  if (tickets.enabled) enabledModules.push('tickets');
+  if (tempVoice.enabled) enabledModules.push('tempvoice');
 
   const invite = buildInviteUrl({
     webapp: discovery.endpoints.webapp,
@@ -205,6 +224,11 @@ export default async function SettingsPage({
             { href: `/g/${guildId}/levels`, name: 'Levels', enabled: levels.enabled },
             { href: `/g/${guildId}/fun`, name: 'Fun', enabled: fun.enabled },
             { href: `/g/${guildId}/roles`, name: 'Roles', enabled: roles.enabled },
+            {
+              href: `/g/${guildId}/community`,
+              name: 'Community',
+              enabled: welcome.enabled || giveaways.enabled || tickets.enabled || tempVoice.enabled,
+            },
           ].map((module) => (
             <Link
               key={module.name}

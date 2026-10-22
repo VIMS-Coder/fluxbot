@@ -5,17 +5,21 @@ import {
   completeJob,
   deleteExpiredSessions,
   failJob,
+  listDueGiveaways,
   setBotPresence,
   setBotStatus,
 } from '@fluxbot/db';
 import { fetchGatewayBot, type InstanceDiscovery } from '@fluxbot/fluxer';
+import { finishGiveaway } from '@fluxbot/modules';
 import type { Client } from '@fluxerjs/core';
+import type { FluxerActions } from './runtime/actions';
 import type { GuildRegistry } from './runtime/guildRegistry';
 
 export interface SchedulerDeps {
   db: Database;
   sql: Sql;
   client: Client;
+  actions: FluxerActions;
   instanceId: string;
   discovery: InstanceDiscovery;
   botToken: string;
@@ -55,6 +59,24 @@ export function startScheduler(deps: SchedulerDeps): () => void {
       });
     } catch (error) {
       deps.logger.warn('Bot heartbeat failed', { error: (error as Error).message });
+    }
+
+    try {
+      const due = await listDueGiveaways(deps.db);
+      for (const giveaway of due) {
+        const winners = await finishGiveaway(
+          { db: deps.db, actions: deps.actions, logger: deps.logger },
+          giveaway,
+        );
+        deps.logger.info('Giveaway ended', {
+          giveawayId: giveaway.id,
+          winners: winners.length,
+        });
+      }
+    } catch (error) {
+      deps.logger.warn('Giveaway processing failed', {
+        error: (error as Error).message,
+      });
     }
 
     try {

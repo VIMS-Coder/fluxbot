@@ -4,18 +4,20 @@ export function relativeTime(date: Date | string | null | undefined): string {
   if (!date) return 'never';
   const value = typeof date === 'string' ? new Date(date) : date;
   const delta = Date.now() - value.getTime();
+  const magnitude = Math.abs(delta);
+  const seconds = Math.floor(magnitude / 1000);
 
-  if (delta < 0) return 'just now';
-  const seconds = Math.floor(delta / 1000);
-  if (seconds < 10) return 'just now';
-  if (seconds < 60) return `${seconds}s ago`;
-  const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m ago`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
-  const days = Math.floor(hours / 24);
-  if (days < 30) return `${days}d ago`;
-  return value.toLocaleDateString();
+  let amount: string;
+  if (seconds < 10) amount = 'a moment';
+  else if (seconds < 60) amount = `${seconds}s`;
+  else if (seconds < 3600) amount = `${Math.floor(seconds / 60)}m`;
+  else if (seconds < 86_400) amount = `${Math.floor(seconds / 3600)}h`;
+  else if (seconds < 2_592_000) amount = `${Math.floor(seconds / 86_400)}d`;
+  else return value.toLocaleDateString();
+
+  if (delta < 0) return `in ${amount}`;
+  if (amount === 'a moment') return 'just now';
+  return `${amount} ago`;
 }
 
 export function formatDateTime(date: Date | string | null | undefined): string {

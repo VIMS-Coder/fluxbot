@@ -63,11 +63,12 @@ async function main(): Promise<void> {
 
   const client = await Client.fromDiscovery(origin);
 
+  const actions = new FluxerActions(client);
   const deps: CommandDeps & { client: Client } = {
     client,
     db,
     instanceId: instance.id,
-    actions: new FluxerActions(client),
+    actions,
     configs,
     registry,
     index: new CommandIndex(allCommands),
@@ -109,6 +110,7 @@ async function main(): Promise<void> {
     db,
     sql,
     client,
+    actions,
     instanceId: instance.id,
     discovery,
     botToken: env.botToken,

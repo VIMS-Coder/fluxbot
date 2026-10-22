@@ -37,6 +37,50 @@ export const rolesConfigSchema = z.object({
 
 export type RolesConfig = z.infer<typeof rolesConfigSchema>;
 
+export const welcomeConfigSchema = z.object({
+  enabled: z.boolean().default(false),
+  channelId: z.string().max(32).nullable().default(null),
+  joinMessage: z
+    .string()
+    .max(2000)
+    .default('Welcome {user} to **{server}**! You are member #{count}.'),
+  leaveMessage: z.string().max(2000).default('**{name}** left the server.'),
+  sendLeave: z.boolean().default(false),
+});
+
+export type WelcomeConfig = z.infer<typeof welcomeConfigSchema>;
+
+export const giveawaysConfigSchema = z.object({
+  enabled: z.boolean().default(true),
+  emoji: z.string().min(1).max(64).default('🎉'),
+  defaultDurationMinutes: z.number().int().min(1).max(43_200).default(60),
+  defaultWinners: z.number().int().min(1).max(20).default(1),
+});
+
+export type GiveawaysConfig = z.infer<typeof giveawaysConfigSchema>;
+
+export const ticketsConfigSchema = z.object({
+  enabled: z.boolean().default(false),
+  parentChannelId: z.string().max(32).nullable().default(null),
+  staffRoleId: z.string().max(32).nullable().default(null),
+  welcomeMessage: z
+    .string()
+    .max(2000)
+    .default('Thanks for opening a ticket, {user}. A member of staff will be with you shortly.'),
+});
+
+export type TicketsConfig = z.infer<typeof ticketsConfigSchema>;
+
+export const tempVoiceConfigSchema = z.object({
+  enabled: z.boolean().default(false),
+  hubChannelId: z.string().max(32).nullable().default(null),
+  categoryId: z.string().max(32).nullable().default(null),
+  nameTemplate: z.string().min(1).max(100).default('🔊 {name}'),
+  userLimit: z.number().int().min(0).max(99).default(0),
+});
+
+export type TempVoiceConfig = z.infer<typeof tempVoiceConfigSchema>;
+
 export const coreConfigSchema = z.object({
   enabled: z.boolean().default(true),
 });
@@ -47,6 +91,10 @@ export const moduleSchemas = {
   levels: levelsConfigSchema,
   fun: funConfigSchema,
   roles: rolesConfigSchema,
+  welcome: welcomeConfigSchema,
+  giveaways: giveawaysConfigSchema,
+  tickets: ticketsConfigSchema,
+  tempvoice: tempVoiceConfigSchema,
   core: coreConfigSchema,
 } as const;
 

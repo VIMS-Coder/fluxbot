@@ -47,12 +47,25 @@ Fluxbot treats the dashboard as the primary interface:
 | **Dashboard** | ✅ Available | Guild picker, module configuration, channel/role pickers, per-command overrides, audit log, bot status, analytics |
 | **Moderation** | 🚧 Next | Warnings/cases, timeout, kick, ban, tempban, purge, mod log |
 | **Logging & automod** | 🚧 Next | Message/member/channel logs, rule engine with a test simulator |
-| **Community** | 📋 Planned | Welcome messages, tickets, giveaways, temp voice channels |
+| **Community** | ✅ Available | Welcome/leave messages, reaction giveaways with timed draws, private-thread tickets, join-to-create temp voice |
 | **Bridges** | 📋 Planned | Discord ↔ Fluxer channel mirroring: bots for ingress, webhooks for faithful names and avatars |
 | **Scale-out** | 📋 Planned | Sharding, Redis, multi-instance public bot mode |
 
 See the [command reference](docs/commands.md), [architecture notes](docs/architecture.md),
 [Discord bridge design](docs/discord-bridge.md) and the full [roadmap](ROADMAP.md).
+
+## Screenshots
+
+| Server picker | Overview |
+|---|---|
+| ![Server picker](docs/screenshots/servers.png) | ![Overview](docs/screenshots/overview.png) |
+
+| Levels | Community |
+|---|---|
+| ![Levels](docs/screenshots/levels.png) | ![Community](docs/screenshots/community.png) |
+
+More in [`docs/screenshots`](docs/screenshots): roles, commands and the full community page.
+All screenshots use the seeded demo instance — no real user data.
 
 ## Quick start (Docker)
 
@@ -87,6 +100,7 @@ openssl rand -base64 32   # ENCRYPTION_KEY
 | **Levels** | XP range, cooldown, curve, announcements, exclusions, role rewards |
 | **Fun** | Enable/disable each command and set a shared cooldown |
 | **Roles** | Reaction-role builder, auto-roles, self-assignable roles |
+| **Community** | Welcome messages with variables, giveaways, tickets, temporary voice channels |
 | **Commands** | Per-command enable, permission level and cooldown override |
 | **Audit log** | Every change with actor, before/after JSON |
 | **Settings** | Prefix, invite link with required permissions, instance and bot status |
@@ -171,7 +185,7 @@ The fake instance sends `!ping`, `!dice 2d6`, a plain message (XP), `!rank` and
 ```bash
 pnpm lint        # Biome
 pnpm typecheck   # tsc across every workspace
-pnpm test        # 73 unit tests
+pnpm test        # 85 unit tests
 pnpm build       # production dashboard build
 ```
 
@@ -184,7 +198,7 @@ See **[ROADMAP.md](ROADMAP.md)** for the full plan. The short version:
 
 1. **v0.2 — Moderation:** cases, timeout, kick, ban, tempban, purge, mod log.
 2. **v0.3 — Logging & automod:** event logs, rule engine, dashboard simulator.
-3. **v0.4 — Community:** welcome, tickets, giveaways, temp voice.
+3. **v0.4 — Community:** ✅ shipped (welcome, giveaways, tickets, temp voice).
 4. **v0.5 — Discord ↔ Fluxer bridge:** bot ingress + webhook egress, opt-in per
    channel. Design: [docs/discord-bridge.md](docs/discord-bridge.md).
 5. **v1.0 — Scale:** sharding, Redis, multi-instance public-bot mode, i18n.

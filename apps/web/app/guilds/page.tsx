@@ -33,7 +33,15 @@ export default async function GuildsPage({
   const guilds = await listGuildsForUser(getDb(), session.user.id);
   const discovery = await getDiscovery();
 
-  const permissions = invitePermissions(['levels', 'fun', 'roles']);
+  const permissions = invitePermissions([
+    'levels',
+    'fun',
+    'roles',
+    'welcome',
+    'giveaways',
+    'tickets',
+    'tempvoice',
+  ]);
   const inviteBase = buildInviteUrl({
     webapp: discovery.endpoints.webapp,
     clientId: env.appId,

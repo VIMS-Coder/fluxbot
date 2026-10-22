@@ -91,6 +91,16 @@ export interface BotActions {
   canManageRole(guildId: string, roleId: string): Promise<boolean>;
   guildRoles(guildId: string): Promise<RoleLike[]>;
   guildMemberCount(guildId: string): Promise<number>;
+  editMessage(channelId: string, messageId: string, payload: SendPayload): Promise<void>;
+  createPrivateThread(channelId: string, name: string): Promise<{ id: string }>;
+  addThreadMember(threadId: string, userId: string): Promise<void>;
+  archiveThread(threadId: string): Promise<void>;
+  createVoiceChannel(
+    guildId: string,
+    options: { name: string; parentId?: string | null; userLimit?: number },
+  ): Promise<{ id: string }>;
+  deleteChannel(channelId: string): Promise<void>;
+  moveMember(guildId: string, userId: string, channelId: string): Promise<void>;
 }
 
 export interface Logger {
@@ -101,7 +111,7 @@ export interface Logger {
   child(fields: Record<string, unknown>): Logger;
 }
 
-export type CommandCategory = 'core' | 'levels' | 'fun' | 'roles' | 'moderation';
+export type CommandCategory = 'core' | 'levels' | 'fun' | 'roles' | 'community' | 'moderation';
 
 export interface RuntimeContext {
   guild: GuildLike | null;

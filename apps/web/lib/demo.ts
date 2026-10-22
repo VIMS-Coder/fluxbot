@@ -1,10 +1,18 @@
 import {
+  addGiveawayEntry,
+  createGiveaway,
+  createTempVoice,
+  createTicket,
   ensureGuild,
   getGuildByFluxerId,
   getGuildConfig,
   getXpUser,
   grantXp,
   listAudit,
+  listGiveaways,
+  listTempVoices,
+  listTickets,
+  recordAnalytics,
   recordAudit,
   setBotStatus,
   setGuildBotPresent,
@@ -55,6 +63,10 @@ const DEMO_GUILDS = [
       { id: '300000000000000002', name: 'levels', type: 0, position: 1 },
       { id: '300000000000000003', name: 'roles', type: 0, position: 2 },
       { id: '300000000000000004', name: 'staff', type: 0, position: 3 },
+      { id: '300000000000000005', name: 'Lounge', type: 2, position: 4 },
+      { id: '300000000000000006', name: 'Voice channels', type: 4, position: 5 },
+      { id: '300000000000000007', name: '➕ Create Voice', type: 2, position: 6 },
+      { id: '300000000000000008', name: '🔊 Demo Admin', type: 2, position: 7 },
     ],
     roles: [
       { id: '200000000000000001', name: '@everyone', color: 0, position: 0 },
@@ -136,7 +148,15 @@ export async function ensureDemoData(): Promise<void> {
 
       await upsertGuildSnapshot(db, row.id, guild.channels, guild.roles);
 
-      for (const moduleId of ['levels', 'fun', 'roles'] as const) {
+      for (const moduleId of [
+        'levels',
+        'fun',
+        'roles',
+        'welcome',
+        'giveaways',
+        'tickets',
+        'tempvoice',
+      ] as const) {
         const existing = await getGuildConfig(db, row.id, moduleId);
         if (!existing) {
           await setGuildConfig(db, row.id, moduleId, defaultsFor(moduleId), null);
@@ -153,6 +173,104 @@ export async function ensureDemoData(): Promise<void> {
               userId: entry.userId,
               amount: entry.xp,
               level: 0,
+            });
+          }
+
+          const welcome = await getGuildConfig(db, row.id, 'welcome');
+          await setGuildConfig(
+            db,
+            row.id,
+            'welcome',
+            {
+              ...defaultsFor('welcome'),
+              enabled: true,
+              channelId: '300000000000000001',
+              sendLeave: true,
+              joinMessage: 'Welcome {user} to **{server}**! You are member #{count}.',
+            },
+            null,
+          );
+          void welcome;
+
+          const ticketConfig = await getGuildConfig(db, row.id, 'tickets');
+          await setGuildConfig(
+            db,
+            row.id,
+            'tickets',
+            {
+              ...defaultsFor('tickets'),
+              enabled: true,
+              parentChannelId: '300000000000000001',
+              staffRoleId: '400000000000000003',
+            },
+            null,
+          );
+          void ticketConfig;
+
+          const tempConfig = await getGuildConfig(db, row.id, 'tempvoice');
+          await setGuildConfig(
+            db,
+            row.id,
+            'tempvoice',
+            {
+              ...defaultsFor('tempvoice'),
+              enabled: true,
+              hubChannelId: '300000000000000007',
+              categoryId: '300000000000000006',
+              nameTemplate: '🔊 {name}',
+            },
+            null,
+          );
+          void tempConfig;
+
+          const existingGiveaways = await listGiveaways(db, row.id, 1);
+          if (existingGiveaways.length === 0) {
+            const giveaway = await createGiveaway(db, {
+              guildId: row.id,
+              channelId: '300000000000000001',
+              prize: 'Nitro (1 month)',
+              emoji: '🎉',
+              winnersCount: 1,
+              endsAt: new Date(Date.now() + 1000 * 60 * 60 * 2),
+              createdBy: DEMO_USER.fluxerId,
+            });
+            await addGiveawayEntry(db, giveaway.id, '100000000000000002');
+            await addGiveawayEntry(db, giveaway.id, '100000000000000003');
+          }
+
+          const existingTemps = await listTempVoices(db, row.id);
+          if (existingTemps.length === 0) {
+            await createTempVoice(db, {
+              guildId: row.id,
+              channelId: '300000000000000008',
+              ownerId: '100000000000000001',
+            });
+          }
+
+          const existingTickets = await listTickets(db, row.id, 1);
+          if (existingTickets.length === 0) {
+            await createTicket(db, {
+              guildId: row.id,
+              channelId: '310000000000000001',
+              userId: '100000000000000002',
+            });
+          }
+
+          for (const name of [
+            'ping',
+            'rank',
+            'dice',
+            'help',
+            'rank',
+            'ping',
+            'giveaway',
+            'ticket',
+          ]) {
+            await recordAnalytics(db, {
+              guildId: row.id,
+              type: 'command',
+              name,
+              userId: DEMO_USER.fluxerId,
             });
           }
 
